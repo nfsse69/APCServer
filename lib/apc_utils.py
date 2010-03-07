@@ -14,6 +14,11 @@ state_status_2="Yellow"
 state_status_3="Orange"
 state_status_4="Red"
 
+#Should read these in from a config file
+max_connections=10
+port_number=51114
+server_hostname="192.168.1.107"
+
 def populate_ups_data():
     p=""
     p= subprocess.Popen("apcaccess",stdout=subprocess.PIPE).communicate()[0]
