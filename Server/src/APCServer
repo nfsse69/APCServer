@@ -8,10 +8,21 @@ Usage:
     --windows: runs this as a windows client
     --linux: runs this as a linux client
 '''
+
+#Need to do some sed'ing at build time
+LIBDIR="../../lib"
+
 import os
 import sys
 import os.path
 import getopt
+
+sys.path.append(LIBDIR)
+import apc_utils
+
+
+def start_server():
+    print "Starting APCServer with a pid of: ", pid
 
 def Usage():
     #Use DOC string for usage message.
@@ -53,12 +64,20 @@ except Exception, e:
     sys.exit(2)
     
 try:
-    #Need to flesh out what to do here.
+    #Need to flesh out what to do here, if needed.
     if op_sys == "linux":
         print "Run in Linux Mode"
+        #import linux.py
     elif op_sys == "windows":
         print "Run in Windows Mode"
 except NameError, e:
     print "Operating system not selected. Exiting"
     sys.exit(1)
 
+start_server()
+
+battery_left=apc_utils.get_bat_left()
+#print battery_left
+
+if battery_left < 101:
+    print "It works"
