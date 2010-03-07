@@ -1,8 +1,9 @@
+#-*- mode:python -*-
 '''
-APCClient: Client to connect to the APCServer that is plugged into the USB/serial cable
+APCServer: Server that is plugged into the USB/serial cable
    for an APC UPS.
 Usage:
-    APCClient.py -h|--help -w|--windows -l|--linux
+    APCServer -h|--help -w|--windows -l|--linux
     --help: prints this message.
     --windows: runs this as a windows client
     --linux: runs this as a linux client
@@ -13,7 +14,7 @@ import os.path
 import getopt
 
 def Usage():
-    #Use DOC string for easier stuff.
+    #Use DOC string for usage message.
     print __doc__
 
 #######Main########
@@ -51,10 +52,13 @@ except Exception, e:
     print e
     sys.exit(2)
     
-
-#Need to flesh out what to do here.
-if op_sys == "linux":
-    print "Run in Linux Mode"
-elif op_sys == "windows":
-    print "Run in Windows Mode"
+try:
+    #Need to flesh out what to do here.
+    if op_sys == "linux":
+        print "Run in Linux Mode"
+    elif op_sys == "windows":
+        print "Run in Windows Mode"
+except NameError, e:
+    print "Operating system not selected. Exiting"
+    sys.exit(1)
 
