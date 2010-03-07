@@ -16,13 +16,76 @@ import os
 import sys
 import os.path
 import getopt
+import socket
 
 sys.path.append(LIBDIR)
 import apc_utils
+import time
 
+def get_state():
+    """
+    get_state
+    Server will parse the output of apcaccess. Based on the output of it, the server defines the following states:
+    1) Battery is greater than 75%
+    2) Battery is between 30 and 75%
+    3) Battery is between 10 and 30%
+    4) Battery is less than 10%
+    5) Est Bat runtime is less than 5 Mins.
+
+    If state 5 happens at anytime, shutdown will be signaled.
+    """
+    battery_left=apc_utils.get_bat_left()
+    run_time=apc_utils.get_runtime()
+    print run_time
+    if run_time > 10:
+        if battery_left < 10.0:
+            state=4
+        if battery_left >= 10 and battery_left <=30:
+            state=3
+        if battery_left > 30 and battery_left <=75:
+            state=2
+        if battery_left > 75:
+            state=1
+    else:
+        state=5
+    return state
 
 def start_server():
+    """
+    start_server: the actual daemon
+    If in state 1: Server polls UPS every 30 seconds.
+    If in state 2: Server polls UPS every 10 seconds.
+    If in state 3: Server polls UPS every 5 seconds.
+    If in state 4: Server trips shutdowns
+    """
     print "Starting APCServer with a pid of: ", pid
+    state=get_state()
+    if state == 5:
+        print "APC Battery is close to death. Exiting."
+        state=apc_utils.state_status_4
+######################################################
+#            SIGNAL SHUTDOWN
+######################################################
+        sys.exit(1)
+    #infinite loop. Will be killed by system stuff
+    while 1:
+        if state == 1:
+            sleep = 30
+            status=apc_utils.state_status_1
+        if state == 2:
+            sleep = 10
+            status=apc_utils.state_status_2
+        if state == 3:
+            sleep = 5
+            status=apc_utils.state_status_3
+        if state == 4:
+            sleep = 10
+            status=apc_utils.state_status_4
+########################################################
+#          SEND DATA OVER SOCKET
+########################################################
+        print "Sleeping for: ", sleep
+        time.sleep(sleep)
 
 def Usage():
     #Use DOC string for usage message.

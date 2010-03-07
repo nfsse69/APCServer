@@ -9,6 +9,11 @@ import subprocess
 import os
 import sys
 
+state_status_1="Green"
+state_status_2="Yellow"
+state_status_3="Orange"
+state_status_4="Red"
+
 def populate_ups_data():
     p=""
     p= subprocess.Popen("apcaccess",stdout=subprocess.PIPE).communicate()[0]
@@ -34,5 +39,6 @@ def get_bat_left():
     return float(bat_left.split()[0])
 
 def get_runtime():
-    lookup_ups_data("TIMELEFT")
+    r_time=lookup_ups_data("TIMELEFT")
+    return float(r_time.split()[0])
     
