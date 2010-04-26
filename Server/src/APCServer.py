@@ -54,21 +54,25 @@ class APCServer(Thread):
     def set_states(self):
      #infinite loop. Will be killed by system stuff
         while 1:
-            (clientsocket,address)=serversocket.accept()
-            if state == 1:
+            (clientsocket,address)=self.serversocket.accept()
+            if self.state == 1:
                 sleep = 30
-                status=apc_utils.state_status_1
+                self.status=apc_utils.state_status_1
             if state == 2:
                 sleep = 10
-                status=apc_utils.state_status_2
+                self.status=apc_utils.state_status_2
             if state == 3:
                 sleep = 5
-                status=apc_utils.state_status_3
+                self.status=apc_utils.state_status_3
             if state == 4:
                 sleep = 10
-                status=apc_utils.state_status_4
+                self.status=apc_utils.state_status_4
             print "Sleeping for: ", sleep
             time.sleep(sleep)
+
+    def start_server_thread(self):
+        Thread.__init__(self)
+        self.set_states()
             
     def start_server(self):
         """
@@ -104,7 +108,12 @@ class APCServer(Thread):
             print "APC Battery is close to death. Exiting."
             self.state_status=apc_utils.state_status_4
 
-    
+        print "Starting server thread."
+        #need to fire off a system thread for setting states.
+        self.start_server_thread()
+        print "threading works."
+
+
 ######################################################
 #            SIGNAL SHUTDOWN
 ######################################################
