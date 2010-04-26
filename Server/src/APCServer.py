@@ -95,7 +95,11 @@ class APCServer(Thread):
         outstr+=str(apc_utils.port_number)
         print outstr
 
-        state=self.get_state()
+        try:
+            state=self.get_state()
+        except Exception, e:
+            print "Is APCUPSD running? Recieved error: ", e
+            sys.exit(1)
         if state == 5:
             print "APC Battery is close to death. Exiting."
             self.state_status=apc_utils.state_status_4
